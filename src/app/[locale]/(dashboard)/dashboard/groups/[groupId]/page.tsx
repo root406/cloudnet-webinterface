@@ -6,8 +6,6 @@ import GroupClientPage from './page.client'
 import { serverGroupApi } from '@/lib/server-api'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function GroupPage(props) {
   const { groupId } = await props.params
   const navigationT = await getDict('Navigation')
@@ -17,7 +15,7 @@ export default async function GroupPage(props) {
   const requiredPermissions = [
     'cloudnet_rest:group_read',
     'cloudnet_rest:group_get',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions

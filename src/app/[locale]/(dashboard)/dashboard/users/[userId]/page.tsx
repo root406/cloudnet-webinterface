@@ -6,8 +6,6 @@ import UserClientPage from '@/app/[locale]/(dashboard)/dashboard/users/[userId]/
 import { serverUserApi } from '@/lib/server-api'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function UserPage(props) {
   const params = await props.params
   const usersT = await getDict('Users')
@@ -18,7 +16,7 @@ export default async function UserPage(props) {
   const requiredPermissions = [
     'cloudnet_rest:user_read',
     'cloudnet_rest:user_get',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -41,8 +39,8 @@ export default async function UserPage(props) {
     <PageLayout
       title={usersT('editTitle', {
         variables: {
-          name: user?.username,
-        },
+          name: user?.username
+        }
       })}
     >
       <UserClientPage user={user} />

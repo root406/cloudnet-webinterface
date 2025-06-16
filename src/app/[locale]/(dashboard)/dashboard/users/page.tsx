@@ -6,7 +6,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { getPermissions } from '@/utils/server-api/getPermissions'
@@ -18,18 +18,16 @@ import { serverUserApi } from '@/lib/server-api'
 import CreateUser from '@/components/modules/users/createUser'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function UsersPage() {
   const usersT = await getDict('Users')
   const mainT = await getDict('Main')
-  
+
   const users: Users = await serverUserApi.list()
   const permissions = await getPermissions()
   const requiredPermissions = [
     'cloudnet_rest:user_read',
     'cloudnet_rest:user_get_all',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -71,18 +69,18 @@ export default async function UsersPage() {
                 {requiredPermissions.some((permission) =>
                   permissions.includes(permission)
                 ) && (
-                  <TableCell>
-                    <Link href={`/dashboard/users/${user.id}`}>
-                      <Button
-                        size={'sm'}
-                        variant={'link'}
-                        className={'p-0 text-right'}
-                      >
-                        {mainT('edit')}
-                      </Button>
-                    </Link>
-                  </TableCell>
-                )}
+                    <TableCell>
+                      <Link href={`/dashboard/users/${user.id}`}>
+                        <Button
+                          size={'sm'}
+                          variant={'link'}
+                          className={'p-0 text-right'}
+                        >
+                          {mainT('edit')}
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  )}
               </TableRow>
             ))}
         </TableBody>

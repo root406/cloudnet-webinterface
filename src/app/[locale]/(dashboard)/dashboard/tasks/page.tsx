@@ -6,7 +6,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { getPermissions } from '@/utils/server-api/getPermissions'
@@ -16,8 +16,6 @@ import Link from 'next/link'
 import { serverTaskApi } from '@/lib/server-api'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function TasksPage() {
   const tasks = await serverTaskApi.list()
   const permissions = await getPermissions()
@@ -26,13 +24,13 @@ export default async function TasksPage() {
   const requiredPermissions = [
     'cloudnet_rest:task_read',
     'cloudnet_rest:task_list',
-    'global:admin',
+    'global:admin'
   ]
 
   const requiredEditPermissions = [
     'cloudnet_rest:task_read',
     'cloudnet_rest:task_get',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -71,8 +69,12 @@ export default async function TasksPage() {
             .map((task) => (
               <TableRow key={task?.name}>
                 <TableCell className="font-medium">{task?.name}</TableCell>
-                <TableCell>{task?.maintenance ? taskT('yes') : taskT('no')}</TableCell>
-                <TableCell>{task?.staticServices ? taskT('yes') : taskT('no')}</TableCell>
+                <TableCell>
+                  {task?.maintenance ? taskT('yes') : taskT('no')}
+                </TableCell>
+                <TableCell>
+                  {task?.staticServices ? taskT('yes') : taskT('no')}
+                </TableCell>
                 {hasEditPermissions && (
                   <TableCell>
                     <Link href={`/dashboard/tasks/${task?.name}`}>

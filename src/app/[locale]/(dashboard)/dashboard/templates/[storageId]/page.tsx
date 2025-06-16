@@ -6,7 +6,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { getPermissions } from '@/utils/server-api/getPermissions'
@@ -14,8 +14,6 @@ import NoAccess from '@/components/static/noAccess'
 import NoRecords from '@/components/static/noRecords'
 import Link from 'next/link'
 import { serverStorageApi } from '@/lib/server-api'
-
-export const runtime = 'edge'
 
 export default async function ServicesPage(props) {
   const params = await props.params
@@ -26,13 +24,13 @@ export default async function ServicesPage(props) {
   const requiredPermissions = [
     'cloudnet_rest:template_storage_read',
     'cloudnet_rest:template_storage_template_list',
-    'global:admin',
+    'global:admin'
   ]
 
   const requiredEditPermissions = [
     'cloudnet_rest:template_read',
     'cloudnet_rest:template_directory_list',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -86,20 +84,20 @@ export default async function ServicesPage(props) {
                 {requiredPermissions.some((permission) =>
                   permissions.includes(permission)
                 ) && (
-                  <TableCell>
-                    <Link
-                      href={`/dashboard/templates/${storageId}/${template.prefix}`}
-                    >
-                      <Button
-                        size={'sm'}
-                        variant={'link'}
-                        className={'p-0 text-right'}
+                    <TableCell>
+                      <Link
+                        href={`/dashboard/templates/${storageId}/${template.prefix}`}
                       >
-                        Edit
-                      </Button>
-                    </Link>
-                  </TableCell>
-                )}
+                        <Button
+                          size={'sm'}
+                          variant={'link'}
+                          className={'p-0 text-right'}
+                        >
+                          Edit
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  )}
               </TableRow>
             ))}
         </TableBody>

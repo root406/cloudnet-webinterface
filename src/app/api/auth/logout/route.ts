@@ -1,7 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-
-export const runtime = 'edge'
 
 /**
  * This route is used to logout the user and delete all cookies.
@@ -19,7 +17,7 @@ export async function POST() {
         secure: isSecure,
         sameSite: 'strict',
         maxAge: 0,
-        path: '/',
+        path: '/'
       })
     }
 

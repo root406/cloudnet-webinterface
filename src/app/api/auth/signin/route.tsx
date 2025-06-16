@@ -1,8 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-export const runtime = 'edge'
-
 /**
  * This route is used to sign in the user and set the cookies.
  */
@@ -30,7 +28,7 @@ export async function POST(request: NextRequest) {
       secure: isSecure,
       sameSite: 'strict',
       maxAge: expiresIn,
-      path: '/',
+      path: '/'
     })
   }
 
@@ -61,8 +59,8 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         Authorization: `Basic ${btoa(`${username}:${password}`)}`,
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     })
 
     const dataResponse = await response.json()

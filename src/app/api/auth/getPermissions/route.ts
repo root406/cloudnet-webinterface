@@ -1,8 +1,6 @@
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'
 
-export const runtime = 'edge'
-
 /**
  * This route is used to get the permissions cookie.
  * Only used for the client side, for Server components use `getPermissions.ts`
@@ -24,6 +22,6 @@ export async function GET() {
   const permissions = cookieObject['permissions']
 
   return NextResponse.json({
-    data: JSON.parse(decodeURIComponent(permissions)),
+    data: JSON.parse(decodeURIComponent(permissions))
   })
 }

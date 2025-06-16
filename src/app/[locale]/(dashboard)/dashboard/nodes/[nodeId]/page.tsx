@@ -7,8 +7,6 @@ import AutoRefresh from '@/components/autoRefresh'
 import { serverNodeApi } from '@/lib/server-api'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function NodePage(props) {
   const params = await props.params
   const { nodeId } = params
@@ -20,7 +18,7 @@ export default async function NodePage(props) {
   const requiredPermissions = [
     'cloudnet_rest:cluster_read',
     'cloudnet_rest:cluster_node_get',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions

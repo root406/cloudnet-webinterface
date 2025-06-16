@@ -11,14 +11,12 @@ import {
   serverTaskApi,
   serverServiceApi,
   serverUserApi,
-  serverStorageApi,
+  serverStorageApi
 } from '@/lib/server-api'
 import { Modules } from '@/utils/types/modules'
 import { NodesType } from '@/utils/types/nodes'
 import { TasksType } from '@/utils/types/tasks'
 import { getDict } from 'gt-next/server'
-
-export const runtime = 'edge'
 
 export default async function DashboardPage() {
   const navigationT = await getDict('Navigation')
@@ -51,7 +49,7 @@ export default async function DashboardPage() {
       templateStorages,
       localTemplates,
       s3Templates,
-      sftpTemplates,
+      sftpTemplates
     ] = await Promise.all([
       serverPlayerApi.onlineAmount().catch(() => ({ onlineCount: 0 })),
       serverPlayerApi.registeredAmount().catch(() => ({ registeredCount: 0 })),
@@ -64,7 +62,7 @@ export default async function DashboardPage() {
       serverStorageApi.getStorages().catch(() => ({ storages: [] })),
       serverStorageApi.getLocalTemplates().catch(() => ({ templates: [] })),
       serverStorageApi.getS3Templates().catch(() => ({ templates: [] })),
-      serverStorageApi.getSFTPTemplates().catch(() => ({ templates: [] })),
+      serverStorageApi.getSFTPTemplates().catch(() => ({ templates: [] }))
     ])
 
     totalTemplates =
@@ -88,7 +86,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_bridge:player_read',
                   'cloudnet_bridge:player_online_count',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>
@@ -99,7 +97,7 @@ export default async function DashboardPage() {
               permissions={[
                 'cloudnet_bridge:player_read',
                 'cloudnet_bridge:player_registered_count',
-                'global:admin',
+                'global:admin'
               ]}
             />
             <Link href={'/dashboard/nodes'}>
@@ -110,7 +108,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_rest:cluster_read',
                   'cloudnet_rest:cluster_node_list',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>
@@ -122,7 +120,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_rest:module_read',
                   'cloudnet_rest:module_list_loaded',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>
@@ -148,7 +146,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_rest:group_read',
                   'cloudnet_rest:group_list',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>
@@ -160,7 +158,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_rest:task_read',
                   'cloudnet_rest:task_list',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>
@@ -172,7 +170,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_rest:service_read',
                   'cloudnet_rest:service_list',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>
@@ -184,7 +182,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_rest:user_read',
                   'cloudnet_rest:user_get_all',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>
@@ -196,7 +194,7 @@ export default async function DashboardPage() {
                 permissions={[
                   'cloudnet_rest:user_read',
                   'cloudnet_rest:user_get_all',
-                  'global:admin',
+                  'global:admin'
                 ]}
               />
             </Link>

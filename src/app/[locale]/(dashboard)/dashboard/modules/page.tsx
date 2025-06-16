@@ -9,14 +9,12 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import { serverModuleApi } from '@/lib/server-api'
 import { getPermissions } from '@/utils/server-api/getPermissions'
 import Link from 'next/link'
 import { getDict } from 'gt-next/server'
-
-export const runtime = 'edge'
 
 export default async function NodesPage() {
   const modulesT = await getDict('Modules')
@@ -27,7 +25,7 @@ export default async function NodesPage() {
   const requiredPermissions = [
     'cloudnet_rest:module_read',
     'cloudnet_rest:module_list_available',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -72,20 +70,20 @@ export default async function NodesPage() {
                 {requiredPermissions.some((permission) =>
                   permissions.includes(permission)
                 ) && (
-                  <TableCell>
-                    <Link
-                      href={`/dashboard/modules/${module.configuration.name}`}
-                    >
-                      <Button
-                        size={'sm'}
-                        variant={'link'}
-                        className={'p-0 text-right'}
+                    <TableCell>
+                      <Link
+                        href={`/dashboard/modules/${module.configuration.name}`}
                       >
-                        {mainT('edit')}
-                      </Button>
-                    </Link>
-                  </TableCell>
-                )}
+                        <Button
+                          size={'sm'}
+                          variant={'link'}
+                          className={'p-0 text-right'}
+                        >
+                          {mainT('edit')}
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  )}
               </TableRow>
             ))}
         </TableBody>

@@ -7,8 +7,6 @@ import ModuleClientPage from './page.client'
 import { serverModuleApi } from '@/lib/server-api'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function NodePage(props) {
   const params = await props.params
   const { moduleId } = params
@@ -20,12 +18,12 @@ export default async function NodePage(props) {
   const requiredPermissions = [
     'cloudnet_rest:module_read',
     'cloudnet_rest:module_get',
-    'global:admin',
+    'global:admin'
   ]
   const requiredConfigPermissions = [
     'cloudnet_rest:module_read',
     'cloudnet_rest:module_config_get',
-    'global:admin',
+    'global:admin'
   ]
 
   // Check if user has required permissions to view module config

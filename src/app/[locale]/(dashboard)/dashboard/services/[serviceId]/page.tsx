@@ -2,7 +2,7 @@ import {
   DatabaseZapIcon,
   MemoryStickIcon,
   ServerOffIcon,
-  UsersIcon,
+  UsersIcon
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { formatBytes } from '@/components/formatBytes'
@@ -18,8 +18,6 @@ import { serverServiceApi } from '@/lib/server-api'
 import DoesNotExist from '@/components/static/doesNotExist'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function UserPage(props) {
   const params = await props.params
   const { serviceId } = params
@@ -30,23 +28,23 @@ export default async function UserPage(props) {
   const requiredPermissions = [
     'cloudnet_rest:service_read',
     'cloudnet_rest:service_get',
-    'global:admin',
+    'global:admin'
   ]
   const requiredEditPermissions = [
     'cloudnet_rest:service_write',
     'cloudnet_rest:service_lifecycle',
-    'global:admin',
+    'global:admin'
   ]
   const requiredDeletePermissions = [
     'cloudnet_rest:service_write',
     'cloudnet_rest:service_delete',
-    'global:admin',
+    'global:admin'
   ]
 
   const requiredConsolePermissions = [
     'cloudnet_rest:service_read',
     'cloudnet_rest:service_live_log',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -84,7 +82,7 @@ export default async function UserPage(props) {
         ? formatBytes(service?.processSnapshot?.maxHeapMemory)
         : 'N/A',
       value1Name: serviceT('usedMemory'),
-      value2Name: serviceT('maxMemory'),
+      value2Name: serviceT('maxMemory')
     },
     {
       name: serviceT('cpu'),
@@ -93,7 +91,7 @@ export default async function UserPage(props) {
       value1: service?.processSnapshot.cpuUsage.toFixed(2) + '%' || 'N/A',
       value2: '',
       value1Name: serviceT('serviceCpuUsage'),
-      value2Name: '',
+      value2Name: ''
     },
     {
       name: serviceT('created'),
@@ -104,7 +102,7 @@ export default async function UserPage(props) {
         : 'N/A',
       value2: '',
       value1Name: serviceT('createdAt'),
-      value2Name: '',
+      value2Name: ''
     },
     {
       name: serviceT('version'),
@@ -113,7 +111,7 @@ export default async function UserPage(props) {
       value1: service?.properties.Version || 'N/A',
       value2: '',
       value1Name: serviceT('version'),
-      value2Name: '',
+      value2Name: ''
     },
     {
       name: serviceT('players'),
@@ -122,14 +120,14 @@ export default async function UserPage(props) {
       value1: service?.properties['Online-Count'] || '0',
       value2: service?.properties['Max-Players'] || '0',
       value1Name: serviceT('onlinePlayers'),
-      value2Name: serviceT('maxPlayers'),
-    },
+      value2Name: serviceT('maxPlayers')
+    }
   ]
 
   const name =
     service?.configuration.serviceId.taskName +
-      service?.configuration.serviceId.nameSplitter +
-      service?.configuration.serviceId.taskServiceId || serviceT('name')
+    service?.configuration.serviceId.nameSplitter +
+    service?.configuration.serviceId.taskServiceId || serviceT('name')
 
   return (
     <PageLayout title={name}>
@@ -141,8 +139,8 @@ export default async function UserPage(props) {
           {requiredConsolePermissions.some((permission) =>
             permissions.includes(permission)
           ) && (
-            <TabsTrigger value={'console'}>{serviceT('console')}</TabsTrigger>
-          )}
+              <TabsTrigger value={'console'}>{serviceT('console')}</TabsTrigger>
+            )}
         </TabsList>
         <TabsContent value={'config'}>
           <ServiceClientPage
@@ -228,14 +226,14 @@ export default async function UserPage(props) {
         {requiredConsolePermissions.some((permission) =>
           permissions.includes(permission)
         ) && (
-          <TabsContent value={'console'}>
-            <ServiceConsole
-              serviceName={name}
-              webSocketPath={`/service/${name}/liveLog`}
-              type={'service'}
-            />
-          </TabsContent>
-        )}
+            <TabsContent value={'console'}>
+              <ServiceConsole
+                serviceName={name}
+                webSocketPath={`/service/${name}/liveLog`}
+                type={'service'}
+              />
+            </TabsContent>
+          )}
       </Tabs>
     </PageLayout>
   )

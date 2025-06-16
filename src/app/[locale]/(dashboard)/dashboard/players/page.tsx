@@ -6,7 +6,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { getPermissions } from '@/utils/server-api/getPermissions'
@@ -17,8 +17,6 @@ import AutoRefresh from '@/components/autoRefresh'
 import { serverPlayerApi } from '@/lib/server-api'
 import { getDict } from 'gt-next/server'
 
-export const runtime = 'edge'
-
 export default async function PlayersPage() {
   const playersT = await getDict('Players')
   const onlinePlayers = await serverPlayerApi.online()
@@ -26,7 +24,7 @@ export default async function PlayersPage() {
   const requiredPermissions = [
     'cloudnet_bridge:player_read',
     'cloudnet_bridge:player_online_count',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -65,7 +63,9 @@ export default async function PlayersPage() {
               <TableHead>{playersT('proxyNode')}</TableHead>
               {requiredPermissions.some((permission) =>
                 permissions.includes(permission)
-              ) && <TableHead className="sr-only">{playersT('details')}</TableHead>}
+              ) && (
+                  <TableHead className="sr-only">{playersT('details')}</TableHead>
+                )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -88,20 +88,20 @@ export default async function PlayersPage() {
                 {requiredPermissions.some((permission) =>
                   permissions.includes(permission)
                 ) && (
-                  <TableCell>
-                    <Link
-                      href={`/dashboard/players/${player?.networkPlayerProxyInfo.uniqueId}`}
-                    >
-                      <Button
-                        size={'sm'}
-                        variant={'link'}
-                        className={'p-0 text-right'}
+                    <TableCell>
+                      <Link
+                        href={`/dashboard/players/${player?.networkPlayerProxyInfo.uniqueId}`}
                       >
-                        {playersT('details')}
-                      </Button>
-                    </Link>
-                  </TableCell>
-                )}
+                        <Button
+                          size={'sm'}
+                          variant={'link'}
+                          className={'p-0 text-right'}
+                        >
+                          {playersT('details')}
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  )}
               </TableRow>
             ))}
           </TableBody>

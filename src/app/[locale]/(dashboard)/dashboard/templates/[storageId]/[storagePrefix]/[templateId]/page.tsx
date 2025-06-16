@@ -4,15 +4,13 @@ import { getPermissions } from '@/utils/server-api/getPermissions'
 import NoAccess from '@/components/static/noAccess'
 import DoesNotExist from '@/components/static/doesNotExist'
 
-export const runtime = 'edge'
-
 export default async function TemplatePage(props) {
   const params = await props.params
   const permissions = await getPermissions()
   const requiredPermissions = [
     'cloudnet_rest:template_read',
     'cloudnet_rest:template_directory_list',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions

@@ -6,7 +6,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { getPermissions } from '@/utils/server-api/getPermissions'
@@ -14,8 +14,6 @@ import NoAccess from '@/components/static/noAccess'
 import { serverStorageApi } from '@/lib/server-api'
 import NoRecords from '@/components/static/noRecords'
 import Link from 'next/link'
-
-export const runtime = 'edge'
 
 export default async function TemplatesPage(props) {
   const params = await props.params
@@ -26,13 +24,13 @@ export default async function TemplatesPage(props) {
   const requiredPermissions = [
     'cloudnet_rest:template_storage_read',
     'cloudnet_rest:template_storage_template_list',
-    'global:admin',
+    'global:admin'
   ]
 
   const requiredEditPermissions = [
     'cloudnet_rest:template_read',
     'cloudnet_rest:template_directory_list',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions

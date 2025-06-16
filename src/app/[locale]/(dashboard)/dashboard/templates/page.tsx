@@ -6,7 +6,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { getPermissions } from '@/utils/server-api/getPermissions'
@@ -15,24 +15,22 @@ import NoRecords from '@/components/static/noRecords'
 import Link from 'next/link'
 import { serverStorageApi } from '@/lib/server-api'
 
-export const runtime = 'edge'
-
 export default async function ServicesPage() {
   let storages: Storages = { storages: [] }
   try {
     storages = await serverStorageApi.getStorages()
-  } catch {}
+  } catch { }
   const permissions = await getPermissions()
   const requiredPermissions = [
     'cloudnet_rest:template_storage_read',
     'cloudnet_rest:template_storage_list',
-    'global:admin',
+    'global:admin'
   ]
 
   const requiredEditPermissions = [
     'cloudnet_rest:template_storage_write',
     'cloudnet_rest:template_storage_template_list',
-    'global:admin',
+    'global:admin'
   ]
 
   // check if user has required permissions
@@ -69,18 +67,18 @@ export default async function ServicesPage() {
                 {requiredPermissions.some((permission) =>
                   permissions.includes(permission)
                 ) && (
-                  <TableCell>
-                    <Link href={`/dashboard/templates/${storage}`}>
-                      <Button
-                        size={'sm'}
-                        variant={'link'}
-                        className={'p-0 text-right'}
-                      >
-                        Edit
-                      </Button>
-                    </Link>
-                  </TableCell>
-                )}
+                    <TableCell>
+                      <Link href={`/dashboard/templates/${storage}`}>
+                        <Button
+                          size={'sm'}
+                          variant={'link'}
+                          className={'p-0 text-right'}
+                        >
+                          Edit
+                        </Button>
+                      </Link>
+                    </TableCell>
+                  )}
               </TableRow>
             ))}
         </TableBody>
