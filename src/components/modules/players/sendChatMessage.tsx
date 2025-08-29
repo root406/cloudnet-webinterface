@@ -13,10 +13,10 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 import { playerApi } from '@/lib/client-api'
-import { useDict } from 'gt-next/client'
+import { useTranslations } from 'gt-next/client'
 
 export default function SendChatMessage({ player }: { player: OnlinePlayer }) {
-  const playersT = useDict('Players')
+  const playersT = useTranslations('Players')
   const [message, setMessage] = useState<string>('')
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
 
@@ -49,14 +49,10 @@ export default function SendChatMessage({ player }: { player: OnlinePlayer }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {playersT('messagePlayer', {
-              variables: { playerName: player?.name }
-            })}
+            {playersT('messagePlayer', { playerName: player?.name })}
           </DialogTitle>
           <DialogDescription className={'pb-4'}>
-            {playersT('confirmMessagePlayer', {
-              variables: { playerName: player?.name }
-            })}
+            {playersT('confirmMessagePlayer', { playerName: player?.name })}
           </DialogDescription>
           <Label htmlFor={'message'}>{playersT('message')}:</Label>
           <Input

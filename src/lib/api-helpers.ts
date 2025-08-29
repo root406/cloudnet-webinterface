@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCookies } from '@/lib/server-calls'
 import { cookies } from 'next/headers'
+import { captureException } from '@sentry/nextjs'
 
 export type ApiResponse<T = any> = {
   success?: boolean
@@ -50,7 +51,9 @@ export async function makeApiRequest<T = any>(
   }
 
   try {
-    const response = await fetch(`${decodeURIComponent(address)}${url}`, {
+    const fullUrl = `${decodeURIComponent(address)}${url}`
+    
+    const response = await fetch(fullUrl, {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -61,10 +64,12 @@ export async function makeApiRequest<T = any>(
         revalidate: 0
       }
     })
+    
     const responseText = await response.text()
 
     try {
       const data = JSON.parse(responseText)
+      
       return {
         data: data.data || data,
         status: response.status
@@ -76,6 +81,7 @@ export async function makeApiRequest<T = any>(
       }
     }
   } catch (error) {
+    captureException(error)
     throw error
   }
 }

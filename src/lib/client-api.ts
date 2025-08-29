@@ -24,10 +24,11 @@ class ApiError extends Error {
 
 async function handleResponse<T>(response: Response): Promise<ApiResponse<T>> {
   if (!response.ok) {
+    const responseText = await response.text()
     throw new ApiError(
       response.status,
       response.statusText,
-      response.statusText
+      responseText || response.statusText
     )
   }
 
@@ -141,8 +142,7 @@ export const userApi = {
 // Auth API
 export const authApi = {
   checkToken: () => apiPost('/api/auth/jwt', {}),
-  createTicket: (type: 'service' | 'node') =>
-    apiPost('/api/auth/ticket', { type }),
+  createTicket: (type: 'service' | 'node') => apiPost<{ secret: string }>('/api/auth/ticket', { type }),
   getCookies: () => apiGet('/api/auth/getCookies'),
   getPermissions: () => apiGet<string[]>('/api/auth/getPermissions')
 }

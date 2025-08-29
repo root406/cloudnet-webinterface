@@ -14,10 +14,10 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { playerApi } from '@/lib/client-api'
-import { useDict } from 'gt-next/client'
+import { useTranslations } from 'gt-next/client'
 
 export default function KickPlayer({ player }: { player: OnlinePlayer }) {
-  const playersT = useDict('Players')
+  const playersT = useTranslations('Players')
   const [kickReason, setKickReason] = useState('')
   const [dialogOpen, setDialogOpen] = useState(false)
 
@@ -46,14 +46,10 @@ export default function KickPlayer({ player }: { player: OnlinePlayer }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {playersT('kickPlayerTitle', {
-              variables: { playerName: player?.name }
-            })}
+            {playersT('kickPlayerTitle', { playerName: player?.name })}
           </DialogTitle>
           <DialogDescription className={'pb-4'}>
-            {playersT('confirmKickPlayer', {
-              variables: { playerName: player?.name }
-            })}
+            {playersT('confirmKickPlayer', { playerName: player?.name })}
           </DialogDescription>
           <Label htmlFor={'kickReason'}>{playersT('kickReason')}</Label>
           <Input

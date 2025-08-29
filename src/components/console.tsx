@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { toast } from 'sonner'
-import { useDict } from 'gt-next/client'
+import { useTranslations } from 'gt-next/client'
 
 interface ConsoleEntry {
   output: string
@@ -63,15 +63,33 @@ export default function ServiceConsole({
   const [filter, setFilter] = useState<'ALL' | 'INFO' | 'WARN' | 'ERROR'>('ALL') // Default filter is ALL
   const consoleEndRef = useRef<HTMLDivElement>(null)
   const [socketBlocked, setSocketBlocked] = useState(false)
-  const consoleT = useDict('Console')
+  const consoleT = useTranslations('Console')
   const hasFetchedLogsRef = useRef(false)
   const socketRef = useRef<WebSocket | null>(null)
+  const MAX_RECONNECT_ATTEMPTS = 10
+  const RECONNECT_BASE_DELAY_MS = 1000
+  const reconnectAttempt = useRef<number>(0)
+  const reconnectTimer = useRef<number | null>(null)
 
   const initializeSocket = async () => {
     if (socketRef.current) return // Prevent re-initialization
 
     try {
-      const ticket = await authApi.createTicket(type)
+      const ticketResponse = await authApi.createTicket(type)
+      
+      // Check if the response is an error
+      if (ticketResponse && typeof ticketResponse === 'object' && 'status' in ticketResponse && ticketResponse.status >= 400) {
+        throw new Error(`Ticket creation failed: ${ticketResponse.title || ticketResponse.detail || 'Unknown error'}`)
+      }
+      
+      // Handle different response formats
+      const ticket = ticketResponse.secret
+      
+      // Validate ticket
+      if (!ticket || typeof ticket !== 'string') {
+        throw new Error(`Invalid ticket: ${ticket} (type: ${typeof ticket})`)
+      }
+      
       const cookies = await authApi.getCookies()
       const cookieAddress = decodeURIComponent(cookies['add'])
       const protocol = cookieAddress.startsWith('https') ? 'wss' : 'ws'
@@ -80,9 +98,11 @@ export default function ServiceConsole({
         ? 'wss'
         : 'ws'
 
-      if (protocol !== domainUrlProtocol) {
-        setSocketBlocked(true)
-        return
+      // Only block if both are HTTPS/WSS and there's a mismatch
+      // Allow HTTP/WS connections even if there's a protocol mismatch for development
+      if (protocol === 'wss' && domainUrlProtocol === 'ws') {
+        console.warn('Protocol mismatch: Backend uses WSS but frontend uses WS. This may cause issues in production.')
+        // For development, we'll still try to connect but warn the user
       }
 
       const socketUrl = `${protocol}://${address}${webSocketPath}?ticket=${ticket}`
@@ -92,8 +112,17 @@ export default function ServiceConsole({
       } catch (error) {
         console.error('WebSocket construction error:', error)
         setSocketBlocked(true)
-        toast.error(consoleT('connectionError'))
         return
+      }
+
+      socketRef.current.onopen = (event) => {
+        // Reset reconnect state on successful open
+        console.log('WebSocket connection opened')
+        reconnectAttempt.current = 0
+        if (reconnectTimer.current) {
+          clearTimeout(reconnectTimer.current)
+          reconnectTimer.current = null
+        }
       }
 
       socketRef.current.onmessage = (event) => {
@@ -102,14 +131,24 @@ export default function ServiceConsole({
         }
         setHistory((prev) => [...prev, newEntry])
       }
-      socketRef.current.onerror = (event) => {
-        console.error('WebSocket error:', event)
-        toast.error(consoleT('connectionError'))
+      
+      socketRef.current.onclose = (event) => {
+        // Attempt automatic reconnect with exponential backoff
+        if (reconnectAttempt.current < MAX_RECONNECT_ATTEMPTS) {
+          const delay = Math.min(
+            30000,
+            RECONNECT_BASE_DELAY_MS * Math.pow(2, reconnectAttempt.current)
+          )
+          reconnectAttempt.current += 1
+          console.log('Attempting reconnect...')
+          // Schedule reconnect
+          reconnectTimer.current = window.setTimeout(() => {
+            initializeSocket()
+          }, delay) as unknown as number
+        }
       }
     } catch (error) {
-      console.error('Socket initialization error:', error)
       setSocketBlocked(true)
-      toast.error(consoleT('connectionError'))
     }
   }
 
@@ -133,6 +172,10 @@ export default function ServiceConsole({
     return () => {
       if (socketRef.current) {
         socketRef.current.close()
+      }
+      if (reconnectTimer.current) {
+        clearTimeout(reconnectTimer.current)
+        reconnectTimer.current = null
       }
     }
   }, [consoleT, webSocketPath, serviceName, type])

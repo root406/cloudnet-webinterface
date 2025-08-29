@@ -20,10 +20,10 @@ import {
 } from '@/components/ui/select'
 import { playerApi } from '@/lib/client-api'
 import { toast } from 'sonner'
-import { useDict } from 'gt-next/client'
+import { useTranslations } from 'gt-next/client'
 
 export default function ExecuteCommand({ player }: { player: OnlinePlayer }) {
-  const playersT = useDict('Players')
+  const playersT = useTranslations('Players')
   const [command, setCommand] = useState<string>('')
   const [isProxy, setIsProxy] = useState<boolean>(false)
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
@@ -54,14 +54,10 @@ export default function ExecuteCommand({ player }: { player: OnlinePlayer }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {playersT('executeCommandTitle', {
-              variables: { playerName: player?.name }
-            })}
+            {playersT('executeCommandTitle', { playerName: player?.name })}
           </DialogTitle>
           <DialogDescription className={'pb-4'}>
-            {playersT('confirmExecuteCommand', {
-              variables: { playerName: player?.name }
-            })}
+            {playersT('confirmExecuteCommand', { playerName: player?.name })}
           </DialogDescription>
           <div className={'pb-4'}>
             <Label htmlFor={'command'}>{playersT('command')}:</Label>

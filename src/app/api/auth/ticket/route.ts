@@ -14,5 +14,5 @@ export const POST = createApiRoute(async (req) => {
       : ['cloudnet_rest:service_live_log']
 
   const response = await makeApiRequest('/auth/ticket', 'POST', { scopes })
-  return NextResponse.json(response.data.secret)
+  return NextResponse.json({ secret: response.data.secret })
 })
