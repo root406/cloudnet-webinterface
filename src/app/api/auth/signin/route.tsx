@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import net from 'net'
 
 /**
  * This route is used to sign in the user and set the cookies.
@@ -34,29 +35,83 @@ export async function POST(request: NextRequest) {
 
   let { address, username, password } = await request.json()
 
-  const ipPattern = new RegExp(
-    /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?::[0-9]{1,5})?$/
-  )
+  const normalizeAndValidateAddress = (rawAddress: string): string => {
+    if (typeof rawAddress !== 'string' || rawAddress.trim() === '') {
+      throw new Error('Invalid address')
+    }
 
-  if (ipPattern.test(address)) {
-    if (!address.startsWith('http://')) {
-      address = 'http://' + address
+    let addr = rawAddress.trim()
+
+    // Ensure a scheme is present so URL parsing is reliable
+    // IP addresses default to http (CloudNet REST API), domains to https
+    if (!addr.startsWith('http://') && !addr.startsWith('https://')) {
+      const hostPart = addr.split('/')[0].split(':')[0]
+      addr = net.isIP(hostPart) ? `http://${addr}` : `https://${addr}`
     }
-  } else {
-    if (address.startsWith('http://')) {
-      address = 'https://' + address.slice(7)
-    } else if (!address.startsWith('https://')) {
-      address = 'https://' + address
+
+    let url: URL
+    try {
+      url = new URL(addr)
+    } catch {
+      throw new Error('Invalid address')
     }
+
+    // Only allow http/https
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+      throw new Error('Invalid address protocol')
+    }
+
+    const host = url.hostname
+    const ipVersion = net.isIP(host)
+
+    // Off by default: self-hosted CloudNet usually runs on loopback/LAN.
+    // Enable on public/multi-tenant instances to mitigate SSRF.
+    if (process.env.BLOCK_PRIVATE_ADDRESSES === 'true') {
+      if (host === 'localhost' || host === '127.0.0.1' || host === '::1') {
+        throw new Error('Address not allowed')
+      }
+
+      if (ipVersion) {
+        const octets = host.split('.').map(Number)
+        if (
+          // 10.0.0.0/8
+          (octets[0] === 10) ||
+          // 172.16.0.0/12
+          (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+          // 192.168.0.0/16
+          (octets[0] === 192 && octets[1] === 168)
+        ) {
+          throw new Error('Address not allowed')
+        }
+      }
+    }
+
+    // Ensure path ends with /api/v3
+    if (!url.pathname.endsWith('/api/v3')) {
+      // Trim any trailing slash then append /api/v3
+      const basePath = url.pathname.replace(/\/+$/, '')
+      url.pathname = basePath + '/api/v3'
+    }
+
+    // Clear hash to avoid confusing downstream logic
+    url.hash = ''
+
+    return url.toString().replace(/\/+$/, '')
   }
 
-  if (!address.endsWith('/api/v3')) {
-    address += '/api/v3'
+  let validatedAddress: string
+  try {
+    validatedAddress = normalizeAndValidateAddress(address)
+  } catch (e) {
+    return NextResponse.json(
+      { error: 'Incorrect address!', status: 400 },
+      { status: 400 }
+    )
   }
 
   try {
     const basicAuth = Buffer.from(`${username}:${password}`).toString('base64')
-    const response = await fetch(`${address}/auth`, {
+    const response = await fetch(`${validatedAddress}/auth`, {
       method: 'POST',
       headers: {
         Authorization: `Basic ${basicAuth}`,
@@ -81,7 +136,7 @@ export async function POST(request: NextRequest) {
       new Date(Date.now() + dataResponse.refreshToken.expiresIn)
     )
 
-    await setCookie('add', address, dataResponse.refreshToken.expiresIn)
+    await setCookie('add', validatedAddress, dataResponse.refreshToken.expiresIn)
     await setCookie('at', dataResponse.accessToken.token, expirationAccessTime)
     await setCookie(
       'rt',
